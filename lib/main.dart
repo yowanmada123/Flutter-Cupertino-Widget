@@ -3,6 +3,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,8 +14,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-        theme: CupertinoThemeData(brightness: Brightness.light),
+    return MaterialApp(
+        // theme: CupertinoThemeData(brightness: Brightness.light),
         home: TampilAlertDialog());
   }
 }
@@ -29,92 +30,74 @@ class TampilAlertDialog extends StatefulWidget {
 class _TampilAlertDialogState extends State<TampilAlertDialog> {
   int pilihIndex = 0;
 
-  @override
-  void initState() {
-    pilihIndex = 0;
-    super.initState();
-  }
-
-  List<Widget> dataBody = [
-    Text(
-      "Home",
-      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-    ),
-    Text(
-      "Search",
-      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-    ),
-    Text(
-      "Arsip",
-      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-    ),
-    Text(
-      "Profile",
-      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-    ),
-  ];
+  DateTime pilihTanggal = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        leading: CupertinoButton(
-          padding: EdgeInsets.all(0),
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
+    return Scaffold(
+      appBar: AppBar(title: Text("Material & Cupertino")),
+      body: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Hari, tanggal dan bulan : ${DateFormat.yMd().format(pilihTanggal)}",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
-          onPressed: () {},
-        ),
-        backgroundColor: Colors.blue,
-        middle: Text(
-          "Cupertino Widget",
-          style: TextStyle(color: Colors.white),
-        ),
-        trailing: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: const [
-            Icon(
-              CupertinoIcons.settings,
-              color: Colors.white,
-              size: 22,
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Icon(
-              CupertinoIcons.profile_circled,
-              color: Colors.white,
-              size: 22,
-            )
-          ],
-        ),
-      ),
-      child: Center(
-          child: CupertinoTabScaffold(
-              tabBar: CupertinoTabBar(
-                  onTap: (nilai) {
-                    pilihIndex = nilai;
-                  },
-                  items: const [
-                    BottomNavigationBarItem(
-                      icon: Icon(CupertinoIcons.home),
-                      label: "Home",
-                    ),
-                    BottomNavigationBarItem(
-                        icon: Icon(CupertinoIcons.search), label: "Search"),
-                    BottomNavigationBarItem(
-                        icon: Icon(CupertinoIcons.archivebox), label: "Arsip"),
-                    BottomNavigationBarItem(
-                        icon: Icon(CupertinoIcons.profile_circled),
-                        label: "Profile"),
-                  ]),
-              tabBuilder: (context, index) {
-                return CupertinoTabView(builder: (context) {
-                  return Center(child: dataBody[pilihIndex]);
-                });
-              })),
+          const SizedBox(
+            height: 15,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              MaterialButton(
+                color: Colors.blue,
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return DatePickerDialog(
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1999),
+                            lastDate: DateTime(2023));
+                      });
+                },
+                child: Text(
+                  "Material Button",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              CupertinoButton(
+                  color: Colors.blue,
+                  child: Text("Date Picker",
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  onPressed: () {
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return Container(
+                            height: 300,
+                            child: CupertinoDatePicker(
+                                mode: CupertinoDatePickerMode.date,
+                                initialDateTime: DateTime.now(),
+                                backgroundColor: Colors.white,
+                                onDateTimeChanged: (tanggal) {
+                                  print(tanggal);
+                                  setState(() {
+                                    pilihTanggal = tanggal;
+                                  });
+                                }),
+                          );
+                        });
+                  }),
+            ],
+          ),
+        ],
+      )),
     );
   }
 }
